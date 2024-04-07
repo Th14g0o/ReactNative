@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Image, View } from 'react-native';
 
 import ImageViewer from './componentes/ImageViewer';
-import Button  from './componentes/Button';
+import Button from './componentes/Button';
 
 // Os componentes nativos do react-natibe, não permite acessar imagens da blioteca do dispositvo,  porem com uma EXPO SDK Biblioteca,
 // chamada expo-image-picker, nos conseguimos acessar a interface do sitstema de seleção de imagens e videos ou tirar uma foto com a camera
@@ -10,11 +10,26 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { useState } from 'react';
 
+import CircleButton from './componentes/CircleButton';
+import IconButton from './componentes/IconButton'
+
+import EmojiPicker from "./componentes/EmojiPicker";
+
+import EmojiList from './componentes/EmojiList';
+
+import EmojiSticker from './componentes/EmojiSticker';
+
 const PlaceholderImage = require('./assets/images/background-image.png');
 
 export default function App() {
 
   const [selectedImage, setSelectedImage] = useState(null);
+
+  const [showAppOptions, setShowAppOptions] = useState(false);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const [pickedEmoji, setPickedEmoji] = useState(null);
 
   const pickImageAsync = async () => {
     //Abre a seleção de imagem
@@ -46,20 +61,53 @@ export default function App() {
       //Uri é a nossa imagem
       //Abaixo acessamos assets, pegamos o primeiro elemento, e acessamos o uri
       setSelectedImage(result.assets[0].uri);
+      setShowAppOptions(true);
     } else {
       alert('Você não selecionou nenhuma imagem.');
     }
+  };
+
+  const onReset = () => {
+    setShowAppOptions(false);
+  };
+
+  const onAddSticker = () => {
+    setIsModalVisible(true);
+  };
+
+  const onSaveImageAsync = async () => {
+    // we will implement this later
+  };
+
+  const onModalClose = () => {
+    setIsModalVisible(false);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
+        {pickedEmoji && <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />}
       </View>
-      <View style={styles.footerContainer}>
-        <Button label="Escolha uma foto" theme="primary" onPress={pickImageAsync} />
-        <Button label="Use esta foto" />
-      </View>
+      {showAppOptions ?
+        (
+          <View style={styles.optionsContainer}>
+            <View style={styles.optionsRow}>
+              <IconButton icon="refresh" label="Reset" onPress={onReset} />
+              <CircleButton onPress={onAddSticker} />
+              <IconButton icon="save-alt" label="Save" onPress={onSaveImageAsync} />
+            </View>
+          </View>
+        ) :
+        (
+          <View style={styles.footerContainer}>
+            <Button label="Escolha uma foto" theme="primary" onPress={pickImageAsync} />
+            <Button label="Use esta foto" onPress={() => setShowAppOptions(true)} />
+          </View>
+        )}
+      <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
+        <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
+      </EmojiPicker>
       <StatusBar style="auto" />
     </View>
   );
@@ -79,5 +127,13 @@ const styles = StyleSheet.create({
   footerContainer: {
     flex: 1 / 3,
     alignItems: 'center',
+  },
+  optionsContainer: {
+    position: 'absolute',
+    bottom: 80,
+  },
+  optionsRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
   },
 });
