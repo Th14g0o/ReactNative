@@ -19,6 +19,10 @@ import EmojiList from './componentes/EmojiList';
 
 import EmojiSticker from './componentes/EmojiSticker';
 
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+//A biblioteca React Native Gesture Handler é uma biblioteca que capta interações relacionada ao toque na tela
+//Para que as interações seja captadas se usa o elemento <GestureHandlerRootView> no top level/ como elemento raiz/Pai
+
 const PlaceholderImage = require('./assets/images/background-image.png');
 
 export default function App() {
@@ -84,7 +88,7 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView style={styles.container}>
       <View style={styles.imageContainer}>
         <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
         {pickedEmoji && <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />}
@@ -109,7 +113,7 @@ export default function App() {
         <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
       </EmojiPicker>
       <StatusBar style="auto" />
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
