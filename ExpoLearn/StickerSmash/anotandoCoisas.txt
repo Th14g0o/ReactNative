@@ -1,0 +1,4 @@
+assets: contem as imagens
+
+Rodar proejeto expo: npx expo start
+

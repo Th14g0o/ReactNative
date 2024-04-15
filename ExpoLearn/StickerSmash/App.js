@@ -4,11 +4,12 @@ import { StyleSheet, Image, View } from 'react-native';
 import ImageViewer from './componentes/ImageViewer';
 import Button from './componentes/Button';
 
-// Os componentes nativos do react-natibe, não permite acessar imagens da blioteca do dispositvo,  porem com uma EXPO SDK Biblioteca,
+// Os componentes nativos do react-native, não permite acessar imagens da blioteca do dispositvo,  porem com uma EXPO SDK Biblioteca,
 // chamada expo-image-picker, nos conseguimos acessar a interface do sitstema de seleção de imagens e videos ou tirar uma foto com a camera
 import * as ImagePicker from 'expo-image-picker';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+//useRef é um hook do react native
 
 import CircleButton from './componentes/CircleButton';
 import IconButton from './componentes/IconButton'
@@ -22,6 +23,12 @@ import EmojiSticker from './componentes/EmojiSticker';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 //A biblioteca React Native Gesture Handler é uma biblioteca que capta interações relacionada ao toque na tela
 //Para que as interações seja captadas se usa o elemento <GestureHandlerRootView> no top level/ como elemento raiz/Pai
+
+import * as MediaLibrary from 'expo-media-library';
+import { captureRef } from 'react-native-view-shot';
+//A biblioteca react-native-view-shot permite tirar print da tela
+//A biblioteca expo-media-library permite acessar a galeria e salvar novas imagens
+//essas bibliotecas so funcionam em IOS e Android
 
 const PlaceholderImage = require('./assets/images/background-image.png');
 
@@ -80,19 +87,46 @@ export default function App() {
   };
 
   const onSaveImageAsync = async () => {
-    // we will implement this later
+    try {
+      const localUri = await captureRef(imageRef, {
+        height: 440,
+        quality: 1,
+      });
+
+      await MediaLibrary.saveToLibraryAsync(localUri);
+      if (localUri) {
+        alert("Saved!");
+      }
+    } catch (e) {
+      alert(e);
+      console.log(e);
+    }
   };
 
   const onModalClose = () => {
     setIsModalVisible(false);
   };
 
+  const [status, requestPermission] = MediaLibrary.usePermissions();
+
+  if (status === null) {
+    requestPermission();
+  }
+
+  const imageRef = useRef();
+
+  
+
   return (
     <GestureHandlerRootView style={styles.container}>
+
       <View style={styles.imageContainer}>
-        <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
-        {pickedEmoji && <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />}
+        <View ref={imageRef} collapsable={false}>
+          <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
+          {pickedEmoji && <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />}
+        </View>
       </View>
+
       {showAppOptions ?
         (
           <View style={styles.optionsContainer}>
