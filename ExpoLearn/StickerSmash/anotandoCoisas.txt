@@ -2,3 +2,6 @@ assets: contem as imagens
 
 Rodar proejeto expo: npx expo start
 
+App.js:
+    Splash screen: imagem mostrada no load de algo do aplicativo, pode ser configurado, como mudar seu background
+    Os icones podem ser imagens grandes, o recomendado é 1024 por 1024 e um .png

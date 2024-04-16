@@ -168,6 +168,10 @@ export default function App() {
         <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
       </EmojiPicker>
       <StatusBar style="auto" />
+      {/* expo-status-bar library vem pre instalado em todo projeto criadoc com o create-expo-app. 
+          Traz o <StatusBar> component que permite configurar a barra de status do celular,
+          mudando sua cor do texto, cor de fundo, fazer ele ser tranlucid ou esconde-lo
+       */}
     </GestureHandlerRootView>
   );
 }
